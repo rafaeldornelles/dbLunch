@@ -1,0 +1,146 @@
+﻿@model VotingViewModel;
+<h2>Votação DbLunch</h2>
+<div class="input-group my-4">
+    <div class="input-group-prepend">
+        <button class="btn btn-outline-secondary" id="prev" type="button">Prev</button>
+    </div>
+    <input type="text" class="form-control text-center datepicker" id="week" placeholder="" aria-label="" aria-describedby="basic-addon1" value="@(Model.Date.Year)-@(Model.Date.Month.ToString().PadLeft(2, '0'))-@(Model.Date.Day.ToString().PadLeft(2,'0'))">
+
+    <div class="input-group-prepend">
+        <button class=" btn btn-outline-secondary" id="next" type="button">Next</button>
+    </div>
+</div>
+@if (!Model.AcceptsVotes)
+{
+    <p class="text-danger text-right">Votação encerrada</p>
+}
+<p>Vote no seu restaurante preferido para o dia:</p>
+<p>@(Model.AcceptsVotes? "Vencendo":"Escolhido"): @(Model.TotalVotes > 0? Model.ChosenRestaurant.Restaurant.Name : "Nenhum")</p>
+<form action="#" id="voting-form">
+    <fieldset @(Model.AcceptsVotes ? "" : "disabled")>
+        <input type="hidden" name="voteDate" value="@(Model.Date.Date)" />
+        @foreach (var result in Model.OrderedRestaurantResults)
+        {
+            <div class="form-group d-flex justify-content-between align-items-center">
+                <input type="radio" name="restaurant_id" id="@result.Restaurant.Id" value="@result.Restaurant.Id" @(result.IsAvaliable? "": "disabled")/>
+                <label for="@result.Restaurant.Id" class="row mx-0 flex-grow-1 align-items-center">
+                    <span class="col-4">@result.Restaurant.Name</span>
+                    <div class="progress px-0 col-8">
+                        <div class="progress-bar" style="width:@(Model.TotalVotes == 0 ? 0 : result.Votes / (double)Model.TotalVotes *100)%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">@(result.Votes) Votos</div>
+                    </div>
+                </label>
+            </div>
+        }
+        <div class="invalid-feedback" id="invalid-restaurant_id">Selecione um restaurante.</div>
+        <p>@(Model.TotalVotes) votos.</p>
+        <div class="form-group">
+            <label for="voter">Funcionário</label>
+            <select id="voter" name="voter_id" class="form-control">
+                <option value="" selected disabled>Selecione...</option>
+                @foreach (var worker in Model.Voters)
+                {
+                    <option value="@(worker.Id)">@(worker.name)</option>
+                }
+            </select>
+            <div class="invalid-feedback show" id="invalid-voter_id">Selecione um funcionário.</div>
+        </div>
+
+    </fieldset>
+    <button type="submit" class="btn btn-primary" disabled="@(!Model.AcceptsVotes)">Votar</button>
+</form>
+<partial name="../shared/_modalerror.cshtml" />
+
+<script>
+    let now;
+    let dateFormat;
+    window.addEventListener("load", () => {
+        now = moment($(".datepicker").val(), "YYYY-MM-DD");
+        console.log(now.toDate());
+        dateFormat = 'DD, dd/mm/yyyy';
+
+        $(".datepicker").datepicker({
+            autoclose: true,
+            daysOfWeekDisabled: [0, 6],
+            format: dateFormat,
+            weekStart: 1,
+            language: "pt-BR"
+        });
+        $(".datepicker").datepicker("setDate", now.toDate())
+            .on("changeDate", e => {
+                const dateSelected = $(".datepicker").first().datepicker("getDate");
+                redirectToDate(moment(dateSelected));
+            });
+
+        $("#prev").click(prevDay);
+        $("#next").click(nextDay);
+
+        $("#voting-form").submit(e => {
+            e.preventDefault();
+            const form = document.querySelector("#voting-form");
+            const voteObj = {
+                "voter_id": form.voter_id.value,
+                "restaurant_id": form.restaurant_id.value,
+                "date": form.voteDate.value
+            }
+
+            if (voteIsValid(voteObj)) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Voting/RegisterVote',
+                    data: JSON.stringify(voteObj),
+                    contentType: "application/json",
+                    dataType: 'text',
+                    success: resp => window.location.reload(),
+                    error: (error) =>showErrorModal(error.responseText, error.status)
+                });
+            }
+
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    });
+
+
+    function nextDay() {
+        do {
+            now = now.add(1, "days");
+        } while ([0, 6].includes(now.weekday()));
+
+        $(".datepicker").datepicker("setDate", now.toDate());
+        redirectToDate(now);
+    };
+
+    function prevDay() {
+        do {
+            now = now.subtract(1, "days");
+        } while ([0, 6].includes(now.weekday()));
+        $(".datepicker").datepicker("update", now.toDate());
+        redirectToDate(now);
+    }
+
+    function redirectToDate(date) {
+        window.location.search = `date=${date.format("YYYY-MM-DD")}`;
+    }
+
+    function voteIsValid(vote) {
+        $(".invalid-feedback").hide();
+        if (vote.restaurant_id == "") {
+            $("#invalid-restaurant_id").show();
+        }
+
+        if (vote.voter_id == "") {
+            $("#invalid-voter_id").show();
+        }
+
+        return vote.restaurant_id != "" && vote.voter_id != "";
+    }
+
+    function showErrorModal(message, status) {
+        $("#modal-error-message").text(message? `Mensagem: ${message}` : "Tente novamente mais tarde.");
+        $("#modal-error-status").text(`Status: ${status}`);
+        $("#errorModal").modal("show");
+    }
+
+</script>
