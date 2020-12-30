@@ -31,32 +31,8 @@
   },
   {
     "date": "2020-12-31T00:00:00",
-    "voter_id": 1004,
+    "voter_id": 1003,
     "restaurant_id": 1004,
     "Id": 1006
-  },
-  {
-    "date": "2020-12-31T00:00:00",
-    "voter_id": 1001,
-    "restaurant_id": 1003,
-    "Id": 1007
-  },
-  {
-    "date": "2020-12-31T00:00:00",
-    "voter_id": 1002,
-    "restaurant_id": 1003,
-    "Id": 1008
-  },
-  {
-    "date": "2020-12-31T00:00:00",
-    "voter_id": 1003,
-    "restaurant_id": 1003,
-    "Id": 1009
-  },
-  {
-    "date": "2020-12-31T00:00:00",
-    "voter_id": 1005,
-    "restaurant_id": 1005,
-    "Id": 1010
   }
 ]

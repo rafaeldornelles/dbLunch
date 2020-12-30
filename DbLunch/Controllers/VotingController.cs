@@ -24,6 +24,10 @@ namespace DbLunch.Controllers
         public async Task<IActionResult> Index([FromQuery] DateTime? date)
         {
             DateTime queryDate = date ?? DateTime.Now;
+            if (queryDate.DayOfWeek == DayOfWeek.Saturday || queryDate.DayOfWeek==DayOfWeek.Sunday)
+            {
+                return Redirect("Voting");
+            }
             var votingViewModel = await votingBusiness.GetVotingViewModel(queryDate);
             return View(votingViewModel);
         }

@@ -91,6 +91,11 @@ namespace DbLunch.Business
                 throw new ArgumentException("Chosen restaurant is not avaliable to be voted.");
             }
 
+            if(vote.date.DayOfWeek == DayOfWeek.Saturday || vote.date.DayOfWeek == DayOfWeek.Sunday)
+            {
+                throw new ArgumentException("Cannot vote on a weekend day.");
+            }
+
             return;
 
         }
