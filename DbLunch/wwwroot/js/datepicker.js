@@ -1,7 +1,7 @@
 ﻿let now;
 let dateFormat;
 function setDatePicker() {
-    now = moment($(".datepicker").val(), "YYYY-MM-DD");
+    now = moment($("#voteDate").val(), "YYYY-MM-DD");
     dateFormat = 'DD, dd/mm/yyyy';
 
     $(".datepicker").datepicker({

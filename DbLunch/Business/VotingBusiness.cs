@@ -27,7 +27,6 @@ namespace DbLunch.Business
             var votesInDate = await voteRepository.getVotesByDate(date);
             var voters = await workerRepository.All();
             var votersWithoutVote = voters.Where(v => !votesInDate.Any(vd => vd.voter_id == v.Id));
-            var UnavaliableRestaurantIds = await GetWinningRestaurantsInWeek(date);
             var restaurantVotes = restaurants.Select(r => new RestaurantResult(
                 Restaurant: r,
                 Votes: votesInDate.Where(v => v.restaurant_id == r.Id).Count(),

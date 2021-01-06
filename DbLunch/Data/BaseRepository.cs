@@ -58,16 +58,6 @@ namespace DbLunch.Data
             return;
         }
 
-        public Task Update(T model)
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool IdExists(IEnumerable<T> modelArray, int id)
-        {
-            return modelArray.Any(x => x.Id == id);
-        }
-
         private int NextId(IEnumerable<T> modelArray)
         {
             return modelArray.Max(x => x.Id) + 1;

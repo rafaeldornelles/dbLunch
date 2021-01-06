@@ -28,11 +28,5 @@
     "voter_id": 1005,
     "restaurant_id": 1004,
     "Id": 1005
-  },
-  {
-    "date": "2020-12-31T00:00:00",
-    "voter_id": 1003,
-    "restaurant_id": 1004,
-    "Id": 1006
   }
 ]

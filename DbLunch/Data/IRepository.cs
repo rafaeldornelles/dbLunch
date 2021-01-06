@@ -10,6 +10,5 @@ namespace DbLunch.Data
         Task Delete(int id);
         Task<T> Find(int id);
         Task Insert(T modelInsert);
-        Task Update(T model);
     }
 }

@@ -4,7 +4,7 @@
     <div class="input-group-prepend">
         <button class="btn btn-outline-secondary" id="prev" type="button">Prev</button>
     </div>
-    <input type="text" class="form-control text-center datepicker" id="week" placeholder="" aria-label="" aria-describedby="basic-addon1" value="@(Model.Date.Year)-@(Model.Date.Month.ToString().PadLeft(2, '0'))-@(Model.Date.Day.ToString().PadLeft(2,'0'))">
+    <input type="text" class="form-control text-center datepicker" id="week" placeholder="" aria-label="" aria-describedby="basic-addon1">
 
     <div class="input-group-prepend">
         <button class=" btn btn-outline-secondary" id="next" type="button">Next</button>
@@ -35,7 +35,7 @@ else
 }
 <form action="#" id="voting-form">
     <fieldset @(Model.AcceptsVotes ? "" : "disabled")>
-        <input type="hidden" name="voteDate" value="@(Model.Date.Date)" />
+        <input type="hidden" name="voteDate" id="voteDate" value="@(Model.Date.Year)-@(Model.Date.Month.ToString().PadLeft(2, '0'))-@(Model.Date.Day.ToString().PadLeft(2,'0'))" />
         @foreach (var result in Model.OrderedRestaurantResults)
         {
             <div class="form-group d-flex justify-content-between align-items-center">
@@ -67,23 +67,8 @@ else
             </div>
 
         </div>
-        <p>Total: @(Model.TotalVotes) @(Model.TotalVotes == 1 ? "voto":"votos").</p>
+        <p>Total: <span id="total-votes">@(Model.TotalVotes)</span> @(Model.TotalVotes == 1 ? "voto":"votos").</p>
 
     </fieldset>
 </form>
 <partial name="../shared/_modalerror.cshtml" />
-
-<script>
-
-
-
-
-
-
-
-
-
-
-
-
-</script>
